@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prétest : Genre et Concepts Liés</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0eb;
+    --surface: #fffdf9;
+    --primary: #2d5016;
+    --accent: #c8882a;
+    --accent2: #7a3b19;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #d4c9bc;
+    --selected: #e8f0e0;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: 'Source Sans 3', sans-serif; color: var(--text); min-height: 100vh; }
+  .top-bar { height: 6px; background: linear-gradient(90deg, var(--primary), var(--accent), var(--accent2), var(--primary)); }
+  header {
+    background: var(--primary); color: white; padding: 2.5rem 2rem 2rem; text-align: center; position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ''; position: absolute; inset: -40px;
+    background: radial-gradient(ellipse at 30% 50%, rgba(200,136,42,0.18), transparent 70%);
+    pointer-events: none;
+  }
+  header h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.5rem,4vw,2.4rem); margin-bottom: 0.4rem; }
+  header p { font-size: 0.95rem; opacity: 0.75; font-weight: 300; }
+  .container { max-width: 780px; margin: 0 auto; padding: 2rem 1.2rem 4rem; }
+
+  .tabs { display: flex; background: var(--surface); border: 1.5px solid var(--border); border-radius: 50px; padding: 4px; margin-bottom: 2rem; width: fit-content; margin-left: auto; margin-right: auto; }
+  .tab-btn { background: none; border: none; padding: 0.5rem 1.5rem; border-radius: 50px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--muted); transition: all 0.25s; }
+  .tab-btn.active { background: var(--primary); color: white; }
+
+  .progress-wrap { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .progress-bar { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 99px; transition: width 0.5s ease; width: 0%; }
+  .progress-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+
+  .question-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.8rem; margin-bottom: 1.2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.04); animation: fadeUp 0.35s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .q-number { display: inline-block; background: var(--accent); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; padding: 2px 10px; border-radius: 99px; margin-bottom: 0.8rem; text-transform: uppercase; }
+  .q-text { font-family: 'Playfair Display', serif; font-size: 1.08rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem; line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 0.55rem; }
+  .option-label { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; user-select: none; }
+  .option-label:hover { border-color: var(--primary); background: var(--selected); }
+  .option-label.selected { border-color: var(--primary); background: var(--selected); }
+  .option-label input { display: none; }
+  .option-box { width: 20px; height: 20px; min-width: 20px; border: 2px solid var(--border); border-radius: 50%; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .option-label.selected .option-box { border-color: var(--primary); background: var(--primary); }
+  .option-box::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; opacity: 0; transition: opacity 0.2s; }
+  .option-label.selected .option-box::after { opacity: 1; }
+  .option-label.checkbox .option-box { border-radius: 4px; }
+  .option-key { font-weight: 700; color: var(--accent2); font-size: 0.92rem; min-width: 18px; }
+  .option-text { font-size: 0.92rem; line-height: 1.55; color: var(--text); }
+  .multi-note { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.6rem; font-style: italic; }
+
+  .submit-wrap { text-align: center; margin-top: 2rem; }
+  .btn-submit { background: var(--primary); color: white; border: none; padding: 0.85rem 3rem; border-radius: 50px; font-family: 'Source Sans 3', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; box-shadow: 0 4px 18px rgba(45,80,22,0.22); }
+  .btn-submit:hover { background: #3d6b20; transform: translateY(-1px); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .thankyou { text-align: center; padding: 3rem 1rem; animation: fadeUp 0.5s ease; }
+  .thankyou .icon { font-size: 3.5rem; margin-bottom: 1rem; }
+  .thankyou h2 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.8rem; margin-bottom: 0.7rem; }
+  .thankyou p { color: var(--muted); font-size: 0.95rem; }
+  .btn-stats { display: inline-block; margin-top: 1.5rem; background: var(--accent); color: white; border: none; padding: 0.7rem 2.2rem; border-radius: 50px; font-family: 'Source Sans 3', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+  .btn-stats:hover { background: var(--accent2); }
+
+  .stats-header { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+  .stat-box { text-align: center; flex: 1; min-width: 80px; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--primary); line-height: 1; }
+  .stat-lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .stats-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; animation: fadeUp 0.4s ease; }
+  .stats-q-title { font-family: 'Playfair Display', serif; font-size: 0.97rem; font-weight: 700; color: var(--primary); margin-bottom: 1rem; }
+  .bar-row { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.3rem; }
+  .bar-key { font-weight: 700; color: var(--accent2); font-size: 0.85rem; min-width: 22px; }
+  .bar-track { flex: 1; height: 28px; background: #ede8e0; border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width 0.8s cubic-bezier(.4,0,.2,1); display: flex; align-items: center; padding-left: 8px; min-width: 0; }
+  .bar-fill.opt-a { background: linear-gradient(90deg, #2d5016, #4a7f25); }
+  .bar-fill.opt-b { background: linear-gradient(90deg, #c8882a, #e0a04a); }
+  .bar-fill.opt-c { background: linear-gradient(90deg, #7a3b19, #a85530); }
+  .bar-fill.opt-d { background: linear-gradient(90deg, #1a5c6e, #2980b9); }
+  .bar-pct { font-size: 0.82rem; font-weight: 700; color: white; white-space: nowrap; }
+  .bar-count { font-size: 0.8rem; color: var(--muted); min-width: 50px; text-align: right; }
+  .bar-opt-text { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.25rem; padding-left: 30px; }
+
+  .loading-overlay { text-align:center; padding: 2rem; color: var(--muted); font-size: 0.9rem; }
+  .spinner { display:inline-block; width:20px; height:20px; border:2px solid var(--border); border-top-color:var(--primary); border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:0.5rem; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .refresh-btn { background: none; border: 1.5px solid var(--border); border-radius: 50px; padding: 0.4rem 1.1rem; font-size: 0.82rem; color: var(--muted); cursor: pointer; font-family: 'Source Sans 3', sans-serif; transition: border-color 0.2s; margin-bottom: 1rem; display:block; margin-left:auto; }
+  .refresh-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .error-msg { background:#fff3f0; border:1.5px solid #f5c4b3; border-radius:8px; padding:1rem; color:#7a3b19; font-size:0.88rem; margin-bottom:1rem; }
+  @media (max-width:500px) { .stats-header{gap:1rem;} .option-text{font-size:0.85rem;} .q-text{font-size:0.97rem;} }
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+<header>
+  <h1>Prétest : Genre et Concepts Liés</h1>
+  <p>Cochez la réponse qui convient le mieux — une seule réponse par question</p>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-form" onclick="showTab('form')">📝 Questionnaire</button>
+    <button class="tab-btn" id="tab-stats" onclick="showTab('stats')">📊 Statistiques</button>
+  </div>
+
+  <!-- FORM PANEL -->
+  <div id="form-panel">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <span class="progress-label" id="progress-label">0 / 10</span>
+    </div>
+
+    <form id="quiz-form">
+
+      <div class="question-card">
+        <span class="q-number">Question 1</span>
+        <div class="q-text">Le genre en tant que concept fait référence :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q1')"><input type="radio" name="q1" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Aux rôles et responsabilités des femmes et des hommes tels qu'ils sont déterminés par la bible.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q1')"><input type="radio" name="q1" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Aux rôles et responsabilités fixés culturellement par la société et que les femmes et des hommes jouent dans leur vie quotidienne comme par exemple être plombier ou femme de ménage.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q1')"><input type="radio" name="q1" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Aux rôles et responsabilités des femmes et des hommes tels qu'ils sont déterminés par la constitution, les lois et les pouvoirs publics.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 2</span>
+        <div class="q-text">Le sexe se définit :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q2')"><input type="radio" name="q2" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Comme étant un ensemble d'attributs biologiques retrouvés chez les humains et les animaux comme par exemple les hommes font des travaux durs que les femmes ne peuvent pas faire.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q2')"><input type="radio" name="q2" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Comme étant ce qui différencie l'homme de la femme dans une société donnée comme Haïti par exemple.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q2')"><input type="radio" name="q2" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Comme étant un ensemble d'attributs biologiques ou physiques retrouvés chez les humains et les animaux comme par exemple l'homme a des testicules et la femme a des seins développés pour allaiter.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 3</span>
+        <div class="q-text">L'égalité de genre se réfère :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q3')"><input type="radio" name="q3" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">À l'égalité des droits, des responsabilités et des opportunités ou encore des chances des femmes, des hommes, des filles et des garçons.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q3')"><input type="radio" name="q3" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">À l'idée que les femmes et les hommes sont les mêmes.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q3')"><input type="radio" name="q3" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">À l'idée que les intérêts, les besoins et les priorités des femmes et des hommes sont pris en considération de manière théorique pour ensuite analyser leur application dans la vie.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 4</span>
+        <div class="q-text">Le concept de l'équité est cerné et compris :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q4')"><input type="radio" name="q4" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Comme étant la volonté d'un gouvernement d'offrir la même chose à tous les gens en termes de droits et de justice pour tous et pour toutes.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q4')"><input type="radio" name="q4" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Comme étant l'accès égal aux ressources et opportunités pour les femmes, les hommes, les filles, et les garçons pour qu'ils-elles puissent s'épanouir librement dans la vie et leur société.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q4')"><input type="radio" name="q4" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Comme étant la possibilité d'accorder les mêmes moyens, les mêmes opportunités et chances aux pauvres et aux riches dans une société démocratique et inclusive.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 5</span>
+        <div class="q-text">L'inclusion sociale peut se définir :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q5')"><input type="radio" name="q5" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Comme étant la création des conditions collectives permettant à chacun et chacune, quel qu'il/elle soit, de s'épanouir sur tous les plans de la vie et faire valoir sa personnalité, ses talents et ses idées pour contribuer au développement du bien commun.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q5')"><input type="radio" name="q5" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Comme étant les droits de tous les individus sans distinction de sexe et d'orientation sexuelle de se faire entendre par les autorités.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q5')"><input type="radio" name="q5" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Comme étant une décision venant du gouvernement de permettre à tous les individus sans distinction de sexe, d'âge, de statut économique et social de prendre part à la vie publique.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 6</span>
+        <div class="q-text">Un budget sensible au genre :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q6')"><input type="radio" name="q6" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Un budget qui prend en compte les besoins spécifiques des hommes et des femmes.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q6')"><input type="radio" name="q6" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Une approche méthodologique permettant de voir dans quelles mesures dépenses publiques ont concouru à l'égalité des sexes ou se sont rapprochées de cet objectif.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q6')"><input type="radio" name="q6" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Un budget qui fait une division mécanique des ressources pour les hommes et les femmes.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 7</span>
+        <div class="q-text">Une analyse Genre :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q7')"><input type="radio" name="q7" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Une analyse comparative entre les sexes qui permet de comprendre et expliquer les écarts entre les hommes et les femmes qui existent dans les ménages, les communautés et les pays.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q7')"><input type="radio" name="q7" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Une étude des rapports de pouvoirs entre les hommes et les femmes.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q7')"><input type="radio" name="q7" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Une analyse fondée sur l'étude des rapports entre les hommes et les femmes.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 8</span>
+        <div class="q-text">Les violences basées sur le genre :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q8')"><input type="radio" name="q8" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Acte de violence qui touche les femmes.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q8')"><input type="radio" name="q8" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Acte de violence qui touche les femmes et les hommes.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q8')"><input type="radio" name="q8" value="c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Acte de violence dirigé uniquement contre les femmes.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 9</span>
+        <div class="q-text">Les formes de violence basées sur le genre :</div>
+        <div class="multi-note">⚠ Plusieurs réponses possibles</div>
+        <div class="options">
+          <label class="option-label checkbox" onclick="selectCheck(this,'q9a')"><input type="checkbox" name="q9" value="a" id="q9a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Les violences physiques.</span></label>
+          <label class="option-label checkbox" onclick="selectCheck(this,'q9b')"><input type="checkbox" name="q9" value="b" id="q9b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Les violences sexuelles.</span></label>
+          <label class="option-label checkbox" onclick="selectCheck(this,'q9c')"><input type="checkbox" name="q9" value="c" id="q9c"><div class="option-box"></div><span class="option-key">c)</span><span class="option-text">Les violences psychologiques.</span></label>
+          <label class="option-label checkbox" onclick="selectCheck(this,'q9d')"><input type="checkbox" name="q9" value="d" id="q9d"><div class="option-box"></div><span class="option-key">d)</span><span class="option-text">Toutes ces formes de violences.</span></label>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <span class="q-number">Question 10</span>
+        <div class="q-text">Les stéréotypes de genre :</div>
+        <div class="options">
+          <label class="option-label" onclick="selectOpt(this,'q10')"><input type="radio" name="q10" value="a"><div class="option-box"></div><span class="option-key">a)</span><span class="option-text">Croyances socialement constituées sur la femme.</span></label>
+          <label class="option-label" onclick="selectOpt(this,'q10')"><input type="radio" name="q10" value="b"><div class="option-box"></div><span class="option-key">b)</span><span class="option-text">Croyances socialement constituées sur la femme et les hommes.</span></label>
+        </div>
+      </div>
+
+      <div class="submit-wrap">
+        <button type="button" class="btn-submit" id="submit-btn" onclick="submitForm()" disabled>Soumettre mes réponses →</button>
+        <div style="margin-top:0.6rem;font-size:0.82rem;color:var(--muted)" id="submit-hint">Répondez à toutes les questions pour soumettre.</div>
+      </div>
+    </form>
+
+    <div class="thankyou" id="thankyou" style="display:none">
+      <div class="icon">✅</div>
+      <h2>Merci pour votre participation !</h2>
+      <p>Vos réponses ont bien été enregistrées en ligne.</p>
+      <button class="btn-stats" onclick="showTab('stats')">Voir les statistiques →</button>
+    </div>
+  </div>
+
+  <!-- STATS PANEL -->
+  <div id="stats-panel" style="display:none">
+    <button class="refresh-btn" onclick="renderStats()">↻ Actualiser les données</button>
+    <div class="stats-header">
+      <div class="stat-box"><div class="stat-num" id="s-total">—</div><div class="stat-lbl">Participants</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-today">—</div><div class="stat-lbl">Aujourd'hui</div></div>
+      <div class="stat-box"><div class="stat-num" id="s-avg">—</div><div class="stat-lbl">Moy. questions</div></div>
+    </div>
+    <div id="stats-content"><div class="loading-overlay"><span class="spinner"></span> Chargement des données…</div></div>
+  </div>
+</div>
+
+<script>
+// ── Storage keys (shared across all users via window.storage API) ─────────────
+const STORAGE_KEY = 'pretest_genre_responses_v1';
+const COUNTER_KEY = 'pretest_genre_counter_v1';
+const TODAY_KEY   = 'pretest_genre_today_v1';
+
+// ── Questions metadata ────────────────────────────────────────────────────────
+const questions = [
+  { id:'q1',  label:'Q1 — Le genre en tant que concept',   opts:['a','b','c'], multi:false },
+  { id:'q2',  label:'Q2 — Le sexe se définit',             opts:['a','b','c'], multi:false },
+  { id:'q3',  label:"Q3 — L'égalité de genre",             opts:['a','b','c'], multi:false },
+  { id:'q4',  label:"Q4 — L'équité",                       opts:['a','b','c'], multi:false },
+  { id:'q5',  label:"Q5 — L'inclusion sociale",            opts:['a','b','c'], multi:false },
+  { id:'q6',  label:'Q6 — Budget sensible au genre',       opts:['a','b','c'], multi:false },
+  { id:'q7',  label:'Q7 — Analyse Genre',                  opts:['a','b','c'], multi:false },
+  { id:'q8',  label:'Q8 — Violences basées sur le genre',  opts:['a','b','c'], multi:false },
+  { id:'q9',  label:'Q9 — Formes de violence (multi)',     opts:['a','b','c','d'], multi:true },
+  { id:'q10', label:'Q10 — Stéréotypes de genre',          opts:['a','b'],     multi:false },
+];
+
+const optLabels = {
+  q1:  ["a) Rôles déterminés par la bible","b) Rôles fixés culturellement","c) Rôles déterminés par la constitution"],
+  q2:  ["a) Attributs biologiques (travaux durs)","b) Ce qui différencie dans une société","c) Attributs biologiques physiques"],
+  q3:  ["a) Égalité des droits et opportunités","b) Femmes et hommes sont les mêmes","c) Intérêts pris en considération"],
+  q4:  ["a) Volonté du gouvernement","b) Accès égal aux ressources","c) Mêmes moyens aux pauvres et riches"],
+  q5:  ["a) Conditions collectives d'épanouissement","b) Droits sans distinction de sexe","c) Décision gouvernementale"],
+  q6:  ["a) Besoins spécifiques des H et F","b) Approche méthodologique des dépenses","c) Division mécanique"],
+  q7:  ["a) Analyse comparative (ménages, pays)","b) Rapports de pouvoirs","c) Rapports entre H et F"],
+  q8:  ["a) Touche les femmes","b) Touche les femmes et les hommes","c) Uniquement contre les femmes"],
+  q9:  ["a) Physiques","b) Sexuelles","c) Psychologiques","d) Toutes ces formes"],
+  q10: ["a) Croyances sur la femme","b) Croyances sur la femme et les hommes"],
+};
+
+// ── Local answers state ───────────────────────────────────────────────────────
+const answers = {};
+let submitted = false;
+
+function selectOpt(label, qId) {
+  label.closest('.options').querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+  label.classList.add('selected');
+  const radio = label.querySelector('input[type="radio"]');
+  if (radio) { radio.checked = true; answers[qId] = radio.value; }
+  updateProgress();
+}
+function selectCheck(label, inputId) {
+  const cb = document.getElementById(inputId);
+  setTimeout(() => {
+    label.classList.toggle('selected', cb.checked);
+    const vals = [...document.querySelectorAll('input[name="q9"]:checked')].map(c => c.value);
+    answers['q9'] = vals.length ? vals : undefined;
+    updateProgress();
+  }, 0);
+}
+function countAnswered() {
+  return questions.filter(q => q.multi ? (answers[q.id] && answers[q.id].length > 0) : !!answers[q.id]).length;
+}
+function updateProgress() {
+  const n = countAnswered();
+  const pct = Math.round((n / questions.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = n + ' / ' + questions.length;
+  const btn = document.getElementById('submit-btn');
+  const hint = document.getElementById('submit-hint');
+  btn.disabled = n < questions.length;
+  hint.textContent = n === questions.length ? 'Toutes les questions sont répondues. Prêt à soumettre !' : 'Répondez à toutes les questions pour soumettre.';
+}
+
+// ── Storage helpers ───────────────────────────────────────────────────────────
+async function storageGet(key) {
+  try { const r = await window.storage.get(key, true); return r ? JSON.parse(r.value) : null; }
+  catch(e) { return null; }
+}
+async function storageSet(key, val) {
+  try { await window.storage.set(key, JSON.stringify(val), true); return true; }
+  catch(e) { return false; }
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+async function submitForm() {
+  if (submitted) return;
+  submitted = true;
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Envoi en cours…';
+  btn.disabled = true;
+
+  const entry = { ts: Date.now(), date: new Date().toISOString().slice(0,10) };
+  questions.forEach(q => { entry[q.id] = answers[q.id]; });
+
+  try {
+    // Load existing responses, append, save back
+    let existing = await storageGet(STORAGE_KEY) || [];
+    if (!Array.isArray(existing)) existing = [];
+    existing.push(entry);
+    // keep last 5000 entries max
+    if (existing.length > 5000) existing = existing.slice(-5000);
+    await storageSet(STORAGE_KEY, existing);
+
+    document.getElementById('quiz-form').style.display = 'none';
+    document.getElementById('thankyou').style.display = 'block';
+  } catch(e) {
+    btn.textContent = 'Réessayer →';
+    btn.disabled = false;
+    submitted = false;
+    alert('Erreur lors de l\'envoi. Vérifiez votre connexion et réessayez.');
+  }
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  document.getElementById('tab-form').classList.toggle('active', tab==='form');
+  document.getElementById('tab-stats').classList.toggle('active', tab==='stats');
+  document.getElementById('form-panel').style.display = tab==='form' ? 'block' : 'none';
+  document.getElementById('stats-panel').style.display = tab==='stats' ? 'block' : 'none';
+  if (tab === 'stats') renderStats();
+}
+
+// ── Render stats ──────────────────────────────────────────────────────────────
+async function renderStats() {
+  const content = document.getElementById('stats-content');
+  content.innerHTML = '<div class="loading-overlay"><span class="spinner"></span> Chargement des données en ligne…</div>';
+
+  let responses;
+  try {
+    responses = await storageGet(STORAGE_KEY);
+    if (!Array.isArray(responses)) responses = [];
+  } catch(e) {
+    content.innerHTML = '<div class="error-msg">⚠ Impossible de charger les données. Vérifiez votre connexion.</div>';
+    return;
+  }
+
+  const total = responses.length;
+  const today = new Date().toISOString().slice(0,10);
+  const todayCount = responses.filter(r => r.date === today).length;
+  const avgAnswered = total > 0 ? Math.round(responses.reduce((s,r) => s + questions.filter(q => q.multi ? (Array.isArray(r[q.id]) && r[q.id].length > 0) : !!r[q.id]).length, 0) / total) : 0;
+
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-today').textContent = todayCount;
+  document.getElementById('s-avg').textContent = total > 0 ? avgAnswered + '/10' : '—';
+
+  if (total === 0) {
+    content.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted);font-style:italic;">Aucune réponse pour le moment.</div>';
+    return;
+  }
+
+  const optColors = ['opt-a','opt-b','opt-c','opt-d'];
+  let html = '';
+
+  questions.forEach(q => {
+    html += `<div class="stats-card"><div class="stats-q-title">${q.label}</div>`;
+
+    if (!q.multi) {
+      const counts = {};
+      q.opts.forEach(o => counts[o] = 0);
+      responses.forEach(r => { if (r[q.id] && counts.hasOwnProperty(r[q.id])) counts[r[q.id]]++; });
+      q.opts.forEach((opt, i) => {
+        const cnt = counts[opt] || 0;
+        const pct = total > 0 ? Math.round((cnt / total) * 100) : 0;
+        const lbl = (optLabels[q.id] || [])[i] || opt;
+        html += `<div class="bar-opt-text">${lbl.length > 60 ? lbl.slice(0,60)+'…' : lbl}</div>`;
+        html += `<div class="bar-row"><span class="bar-key">${opt})</span><div class="bar-track"><div class="bar-fill ${optColors[i]}" style="width:${pct}%">${pct>=12?`<span class="bar-pct">${pct}%</span>`:''}</div></div><span class="bar-count">${cnt} rép.</span></div>`;
+      });
+    } else {
+      const counts = {};
+      q.opts.forEach(o => counts[o] = 0);
+      responses.forEach(r => { if (Array.isArray(r[q.id])) r[q.id].forEach(v => { if (counts.hasOwnProperty(v)) counts[v]++; }); });
+      q.opts.forEach((opt, i) => {
+        const cnt = counts[opt] || 0;
+        const pct = total > 0 ? Math.round((cnt / total) * 100) : 0;
+        const lbl = (optLabels[q.id] || [])[i] || opt;
+        html += `<div class="bar-opt-text">${lbl}</div>`;
+        html += `<div class="bar-row"><span class="bar-key">${opt})</span><div class="bar-track"><div class="bar-fill ${optColors[i]}" style="width:${pct}%">${pct>=12?`<span class="bar-pct">${pct}%</span>`:''}</div></div><span class="bar-count">${cnt} rép.</span></div>`;
+      });
+    }
+    html += '</div>';
+  });
+
+  // Timeline mini-chart
+  if (total >= 2) {
+    const byDate = {};
+    responses.forEach(r => { if (r.date) byDate[r.date] = (byDate[r.date]||0)+1; });
+    const dates = Object.keys(byDate).sort().slice(-14);
+    if (dates.length > 1) {
+      const max = Math.max(...dates.map(d => byDate[d]));
+      html += `<div class="stats-card"><div class="stats-q-title">Évolution des participations (14 derniers jours)</div>`;
+      html += `<div style="display:flex;align-items:flex-end;gap:4px;height:70px;margin-top:0.5rem;">`;
+      dates.forEach(d => {
+        const h = Math.max(6, Math.round((byDate[d]/max)*64));
+        const isToday = d === today;
+        html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+          <span style="font-size:0.68rem;color:var(--muted)">${byDate[d]}</span>
+          <div style="width:100%;height:${h}px;background:${isToday?'var(--accent)':'#2d5016'};border-radius:3px 3px 0 0;opacity:${isToday?1:0.7}"></div>
+          <span style="font-size:0.62rem;color:var(--muted);writing-mode:vertical-lr;transform:rotate(180deg)">${d.slice(5)}</span>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  }
+
+  content.innerHTML = html;
+}
+
+updateProgress();
+</script>
+</body>
+</html>
